@@ -8,16 +8,16 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.util.TreeIterables
 import org.hamcrest.Matcher
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import org.hamcrest.Matchers.allOf
 
 object Waiters {
 
-    /**
-     * Ожидает появления элемента в иерархии в течение заданного времени.
-     * Используется вместо Thread.sleep для синхронизации с асинхронной
-     * загрузкой экранов приложения.
-     */
     fun waitForView(viewMatcher: Matcher<View>, timeoutMillis: Long = 10000) {
         onView(isRoot()).perform(waitForMatch(viewMatcher, timeoutMillis))
+    }
+    fun waitForDisplayedView(viewMatcher: Matcher<View>, timeoutMillis: Long = 10000) {
+        waitForView(allOf(viewMatcher, isDisplayed()), timeoutMillis)
     }
 
     private fun waitForMatch(viewMatcher: Matcher<View>, timeoutMillis: Long): ViewAction {
