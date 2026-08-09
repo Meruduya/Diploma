@@ -33,6 +33,8 @@ class AuthTest {
 
     @Before
     fun prepareAuthScreen() {
+        // Дожидаемся окончания заставки: приложение показывает либо экран
+        // авторизации, либо главный экран, если сессия сохранена
         Waiters.waitForDisplayedView(
             anyOf(withId(R.id.enter_button), withId(R.id.main_menu_image_button)),
             20000
@@ -42,6 +44,7 @@ class AuthTest {
             onView(withId(R.id.authorization_image_button)).perform(click())
             onView(withText("Log out")).perform(click())
         } catch (e: Exception) {
+            // Пользователь не авторизован - уже на экране входа
         }
 
         authPage.waitForAuthScreen()

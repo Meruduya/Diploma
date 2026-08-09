@@ -11,6 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.google.android.material.textfield.TextInputEditText
+import io.qameta.allure.kotlin.Allure
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import ru.iteco.fmhandroid.R
@@ -30,35 +31,47 @@ class AuthPage {
 
     private val signInButton: Matcher<View> = withId(R.id.enter_button)
 
+    fun waitForAuthScreen(): AuthPage {
+        Allure.step("Дождаться загрузки экрана авторизации") {
+            Waiters.waitForView(signInButton)
+        }
+        return this
+    }
+
     fun checkAuthScreenIsDisplayed(): AuthPage {
-        onView(signInButton).check(matches(isDisplayed()))
+        Allure.step("Проверить отображение экрана авторизации") {
+            onView(signInButton).check(matches(isDisplayed()))
+        }
         return this
     }
 
     fun enterLogin(login: String): AuthPage {
-        onView(loginField).perform(replaceText(login), closeSoftKeyboard())
+        Allure.step("Ввести логин: $login") {
+            onView(loginField).perform(replaceText(login), closeSoftKeyboard())
+        }
         return this
     }
 
     fun enterPassword(password: String): AuthPage {
-        onView(passwordField).perform(replaceText(password), closeSoftKeyboard())
+        Allure.step("Ввести пароль") {
+            onView(passwordField).perform(replaceText(password), closeSoftKeyboard())
+        }
         return this
     }
 
     fun clickSignInButton(): AuthPage {
-        onView(signInButton).perform(click())
+        Allure.step("Нажать кнопку входа") {
+            onView(signInButton).perform(click())
+        }
         return this
     }
 
     fun login(login: String, password: String): AuthPage {
-        enterLogin(login)
-        enterPassword(password)
-        clickSignInButton()
-        return this
-    }
-
-    fun waitForAuthScreen(): AuthPage {
-        Waiters.waitForView(signInButton)
+        Allure.step("Выполнить вход с логином $login") {
+            enterLogin(login)
+            enterPassword(password)
+            clickSignInButton()
+        }
         return this
     }
 }

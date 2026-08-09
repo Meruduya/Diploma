@@ -6,14 +6,15 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import io.qameta.allure.kotlin.Allure
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import ru.iteco.fmhandroid.R
 import ru.iteco.fmhandroid.ui.data.Waiters
-import androidx.test.espresso.matcher.RootMatchers
 
 class CreateEditNewsPage {
 
@@ -31,64 +32,88 @@ class CreateEditNewsPage {
     private val cancelButton: Matcher<View> = allOf(withId(R.id.cancel_button), isDisplayed())
 
     fun waitForForm(): CreateEditNewsPage {
-        Waiters.waitForDisplayedView(saveButton, 15000)
+        Allure.step("Дождаться загрузки формы новости") {
+            Waiters.waitForDisplayedView(saveButton, 15000)
+        }
         return this
     }
 
-    fun checkValidationErrorIsDisplayed(): CreateEditNewsPage {
-        onView(saveButton).check(matches(isDisplayed()))
-        onView(cancelButton).check(matches(isDisplayed()))
+    fun checkFormIsDisplayed(): CreateEditNewsPage {
+        Allure.step("Проверить отображение формы новости") {
+            onView(saveButton).check(matches(isDisplayed()))
+        }
         return this
     }
 
     fun selectCategory(category: String): CreateEditNewsPage {
-        onView(categoryField).perform(click())
-
-        onView(withText(category))
-            .inRoot(RootMatchers.isPlatformPopup())
-            .perform(click())
+        Allure.step("Выбрать категорию: $category") {
+            onView(categoryField).perform(click())
+            // Выпадающий список категорий отображается в отдельном popup-окне
+            onView(withText(category))
+                .inRoot(RootMatchers.isPlatformPopup())
+                .perform(click())
+        }
         return this
     }
 
     fun enterTitle(title: String): CreateEditNewsPage {
-        onView(titleField).perform(replaceText(title), closeSoftKeyboard())
+        Allure.step("Ввести заголовок новости: $title") {
+            onView(titleField).perform(replaceText(title), closeSoftKeyboard())
+        }
         return this
     }
 
     fun enterDescription(description: String): CreateEditNewsPage {
-        onView(descriptionField).perform(replaceText(description), closeSoftKeyboard())
+        Allure.step("Ввести описание новости") {
+            onView(descriptionField).perform(replaceText(description), closeSoftKeyboard())
+        }
         return this
     }
 
     fun selectCurrentDate(): CreateEditNewsPage {
-        onView(publishDateField).perform(click())
-        onView(withText("OK")).perform(click())
+        Allure.step("Выбрать текущую дату публикации") {
+            onView(publishDateField).perform(click())
+            onView(withText("OK")).perform(click())
+        }
         return this
     }
 
     fun selectCurrentTime(): CreateEditNewsPage {
-        onView(publishTimeField).perform(click())
-        onView(withText("OK")).perform(click())
+        Allure.step("Выбрать текущее время публикации") {
+            onView(publishTimeField).perform(click())
+            onView(withText("OK")).perform(click())
+        }
         return this
     }
 
     fun clickSaveButton(): CreateEditNewsPage {
-        onView(saveButton).perform(click())
+        Allure.step("Нажать кнопку сохранения") {
+            onView(saveButton).perform(click())
+        }
         return this
     }
 
     fun clickCancelButton(): CreateEditNewsPage {
-        onView(cancelButton).perform(click())
+        Allure.step("Нажать кнопку отмены") {
+            onView(cancelButton).perform(click())
+        }
         return this
     }
 
-    fun checkValidationMessageIsDisplayed(): CreateEditNewsPage {
-        onView(withText("Fill empty fields")).check(matches(isDisplayed()))
-        return this
-    }
 
     fun confirmCancellation(): CreateEditNewsPage {
-        onView(withText("OK")).perform(click())
+        Allure.step("Подтвердить отмену изменений") {
+            onView(withText("OK")).perform(click())
+        }
+        return this
+    }
+
+
+    fun checkValidationErrorIsDisplayed(): CreateEditNewsPage {
+        Allure.step("Проверить, что новость не создана и форма осталась открытой") {
+            onView(saveButton).check(matches(isDisplayed()))
+            onView(cancelButton).check(matches(isDisplayed()))
+        }
         return this
     }
 }

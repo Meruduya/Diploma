@@ -3,6 +3,11 @@ package ru.iteco.fmhandroid.ui
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.qameta.allure.kotlin.Description
+import io.qameta.allure.kotlin.Epic
+import io.qameta.allure.kotlin.Feature
+import io.qameta.allure.kotlin.Story
+import io.qameta.allure.kotlin.junit4.DisplayName
 import org.hamcrest.Matchers.anyOf
 import org.junit.Before
 import org.junit.Rule
@@ -18,6 +23,8 @@ import ru.iteco.fmhandroid.ui.pages.MainPage
 import ru.iteco.fmhandroid.ui.pages.NewsPage
 
 @RunWith(AndroidJUnit4::class)
+@Epic("UI-тестирование приложения «Мобильный хоспис»")
+@Feature("Создание новости")
 class CreateNewsTest {
 
     @get:Rule
@@ -52,6 +59,9 @@ class CreateNewsTest {
     }
 
     @Test
+    @Story("Создание новости")
+    @DisplayName("Создание новости с корректными данными")
+    @Description("Проверяет, что новость с заполненными обязательными полями создаётся и отображается в панели управления. Созданная новость удаляется, чтобы не изменять общие тестовые данные")
     fun createNewsWithValidDataShouldSucceed() {
         val title = TestData.uniqueTitle()
 
@@ -73,6 +83,9 @@ class CreateNewsTest {
     }
 
     @Test
+    @Story("Валидация формы создания новости")
+    @DisplayName("Отказ в создании новости с незаполненными полями")
+    @Description("Проверяет, что при попытке сохранить пустую форму новость не создаётся и форма остаётся открытой")
     fun createNewsWithEmptyFieldsShouldFail() {
         controlPanelPage.clickAddNewsButton()
         createEditNewsPage.waitForForm()
@@ -81,6 +94,9 @@ class CreateNewsTest {
     }
 
     @Test
+    @Story("Отмена создания новости")
+    @DisplayName("Отмена создания новости не создаёт запись")
+    @Description("Проверяет, что при отмене создания новости запись не создаётся и выполняется возврат в панель управления")
     fun cancelNewsCreationShouldNotCreateNews() {
         val title = TestData.uniqueTitle()
 

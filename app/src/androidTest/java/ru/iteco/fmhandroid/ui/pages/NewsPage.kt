@@ -6,6 +6,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import io.qameta.allure.kotlin.Allure
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import ru.iteco.fmhandroid.R
@@ -29,42 +30,58 @@ class NewsPage {
         allOf(withId(R.id.news_retry_material_button), isDisplayed())
 
     fun waitForNewsList(): NewsPage {
-        Waiters.waitForView(newsRecyclerView, 20000)
+        Allure.step("Дождаться загрузки списка новостей") {
+            Waiters.waitForDisplayedView(newsRecyclerView, 20000)
+        }
         return this
     }
 
     fun checkNewsListIsDisplayed(): NewsPage {
-        onView(newsRecyclerView).check(matches(isDisplayed()))
+        Allure.step("Проверить отображение списка новостей") {
+            onView(newsRecyclerView).check(matches(isDisplayed()))
+        }
         return this
     }
 
     fun clickSortButton(): NewsPage {
-        onView(sortButton).perform(click())
+        Allure.step("Нажать кнопку сортировки новостей") {
+            onView(sortButton).perform(click())
+        }
         return this
     }
 
     fun openFilter(): NewsPage {
-        onView(filterButton).perform(click())
+        Allure.step("Открыть экран фильтрации новостей") {
+            onView(filterButton).perform(click())
+        }
         return this
     }
 
     fun openControlPanel(): NewsPage {
-        onView(controlPanelButton).perform(click())
+        Allure.step("Открыть панель управления новостями") {
+            onView(controlPanelButton).perform(click())
+        }
         return this
     }
 
     fun clickExpandButton(): NewsPage {
-        onView(expandButton).perform(click())
+        Allure.step("Свернуть или развернуть секцию новостей") {
+            onView(expandButton).perform(click())
+        }
         return this
     }
 
     fun checkEmptyStateIsDisplayed(): NewsPage {
-        onView(emptyListText).check(matches(isDisplayed()))
+        Allure.step("Проверить отображение пустого состояния экрана") {
+            onView(emptyListText).check(matches(isDisplayed()))
+        }
         return this
     }
 
     fun clickRefreshButton(): NewsPage {
-        onView(refreshButton).perform(click())
+        Allure.step("Нажать кнопку обновления списка") {
+            onView(refreshButton).perform(click())
+        }
         return this
     }
 }
