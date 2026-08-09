@@ -19,7 +19,7 @@ android {
         targetSdkVersion 32
         versionCode 14
         versionName "1.0.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "ru.iteco.fmhandroid.ui.AllureAndroidJUnitRunner"
     }
 
     compileOptions {
