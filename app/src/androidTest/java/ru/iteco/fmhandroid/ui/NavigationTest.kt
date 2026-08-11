@@ -21,6 +21,7 @@ import ru.iteco.fmhandroid.ui.pages.AuthPage
 import ru.iteco.fmhandroid.ui.pages.MainPage
 import ru.iteco.fmhandroid.ui.pages.NewsPage
 import ru.iteco.fmhandroid.ui.pages.OurMissionPage
+import ru.iteco.fmhandroid.ui.data.ScreenshotRule
 
 @RunWith(AndroidJUnit4::class)
 @Epic("UI-тестирование приложения «Мобильный хоспис»")
@@ -30,6 +31,8 @@ class NavigationTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(AppActivity::class.java)
 
+    @get:Rule
+    val screenshotRule = ScreenshotRule()
     private val authPage = AuthPage()
     private val mainPage = MainPage()
     private val newsPage = NewsPage()

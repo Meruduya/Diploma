@@ -21,6 +21,7 @@ import ru.iteco.fmhandroid.ui.pages.ControlPanelPage
 import ru.iteco.fmhandroid.ui.pages.CreateEditNewsPage
 import ru.iteco.fmhandroid.ui.pages.MainPage
 import ru.iteco.fmhandroid.ui.pages.NewsPage
+import ru.iteco.fmhandroid.ui.data.ScreenshotRule
 
 @RunWith(AndroidJUnit4::class)
 @Epic("UI-тестирование приложения «Мобильный хоспис»")
@@ -29,6 +30,9 @@ class CreateNewsTest {
 
     @get:Rule
     val activityRule = ActivityScenarioRule(AppActivity::class.java)
+
+    @get:Rule
+    val screenshotRule = ScreenshotRule()
 
     private val authPage = AuthPage()
     private val mainPage = MainPage()
@@ -77,7 +81,6 @@ class CreateNewsTest {
         controlPanelPage.waitForControlPanel()
         controlPanelPage.checkNewsIsDisplayed(title)
 
-        // Удаляем созданную новость, чтобы не засорять общие тестовые данные
         controlPanelPage.clickDeleteOnNews(title)
         controlPanelPage.confirmDeletion()
     }

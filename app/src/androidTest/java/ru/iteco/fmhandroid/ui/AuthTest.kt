@@ -20,6 +20,7 @@ import ru.iteco.fmhandroid.ui.data.TestData
 import ru.iteco.fmhandroid.ui.data.Waiters
 import ru.iteco.fmhandroid.ui.pages.AuthPage
 import org.hamcrest.Matchers.anyOf
+import ru.iteco.fmhandroid.ui.data.ScreenshotRule
 
 @RunWith(AndroidJUnit4::class)
 @Epic("UI-тестирование приложения «Мобильный хоспис»")
@@ -29,12 +30,15 @@ class AuthTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(AppActivity::class.java)
 
+
+    @get:Rule
+    val screenshotRule = ScreenshotRule()
+
     private val authPage = AuthPage()
+
 
     @Before
     fun prepareAuthScreen() {
-        // Дожидаемся окончания заставки: приложение показывает либо экран
-        // авторизации, либо главный экран, если сессия сохранена
         Waiters.waitForDisplayedView(
             anyOf(withId(R.id.enter_button), withId(R.id.main_menu_image_button)),
             20000
@@ -44,7 +48,6 @@ class AuthTest {
             onView(withId(R.id.authorization_image_button)).perform(click())
             onView(withText("Log out")).perform(click())
         } catch (e: Exception) {
-            // Пользователь не авторизован - уже на экране входа
         }
 
         authPage.waitForAuthScreen()
