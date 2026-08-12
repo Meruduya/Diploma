@@ -6,6 +6,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import io.qameta.allure.kotlin.Allure
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -81,6 +82,13 @@ class NewsPage {
     fun clickRefreshButton(): NewsPage {
         Allure.step("Нажать кнопку обновления списка") {
             onView(refreshButton).perform(click())
+        }
+        return this
+    }
+
+    fun checkNewsIsDisplayed(title: String): NewsPage {
+        Allure.step("Проверить наличие новости в списке: $title") {
+            onView(allOf(withText(title), isDisplayed())).check(matches(isDisplayed()))
         }
         return this
     }

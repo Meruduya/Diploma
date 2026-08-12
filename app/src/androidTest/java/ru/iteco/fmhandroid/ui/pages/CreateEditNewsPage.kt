@@ -27,9 +27,16 @@ class CreateEditNewsPage {
         withId(R.id.news_item_publish_time_text_input_edit_text)
     private val descriptionField: Matcher<View> =
         withId(R.id.news_item_description_text_input_edit_text)
+
+    // Переключатель Active недоступен на форме создания новости (BUG-09),
+    // используется только при редактировании
     private val activeSwitch: Matcher<View> = withId(R.id.switcher)
+
     private val saveButton: Matcher<View> = allOf(withId(R.id.save_button), isDisplayed())
     private val cancelButton: Matcher<View> = allOf(withId(R.id.cancel_button), isDisplayed())
+
+    // Положительная кнопка системных диалогов даты и времени
+    private val dialogPositiveButton: Matcher<View> = withId(android.R.id.button1)
 
     fun waitForForm(): CreateEditNewsPage {
         Allure.step("Дождаться загрузки формы новости") {
@@ -73,7 +80,7 @@ class CreateEditNewsPage {
     fun selectCurrentDate(): CreateEditNewsPage {
         Allure.step("Выбрать текущую дату публикации") {
             onView(publishDateField).perform(click())
-            onView(withText("OK")).perform(click())
+            onView(dialogPositiveButton).perform(click())
         }
         return this
     }
@@ -81,7 +88,7 @@ class CreateEditNewsPage {
     fun selectCurrentTime(): CreateEditNewsPage {
         Allure.step("Выбрать текущее время публикации") {
             onView(publishTimeField).perform(click())
-            onView(withText("OK")).perform(click())
+            onView(dialogPositiveButton).perform(click())
         }
         return this
     }
@@ -100,16 +107,14 @@ class CreateEditNewsPage {
         return this
     }
 
-
     fun confirmCancellation(): CreateEditNewsPage {
         Allure.step("Подтвердить отмену изменений") {
-            onView(withText("OK")).perform(click())
+            onView(withText(R.string.fragment_positive_button)).perform(click())
         }
         return this
     }
 
-
-    fun checkValidationErrorIsDisplayed(): CreateEditNewsPage {
+    fun checkFormIsStillOpen(): CreateEditNewsPage {
         Allure.step("Проверить, что новость не создана и форма осталась открытой") {
             onView(saveButton).check(matches(isDisplayed()))
             onView(cancelButton).check(matches(isDisplayed()))

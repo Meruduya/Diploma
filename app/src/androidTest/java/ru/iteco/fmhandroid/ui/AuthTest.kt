@@ -1,9 +1,5 @@
 package ru.iteco.fmhandroid.ui
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.qameta.allure.kotlin.Description
@@ -15,12 +11,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import ru.iteco.fmhandroid.R
-import ru.iteco.fmhandroid.ui.data.TestData
-import ru.iteco.fmhandroid.ui.data.Waiters
-import ru.iteco.fmhandroid.ui.pages.AuthPage
-import org.hamcrest.Matchers.anyOf
 import ru.iteco.fmhandroid.ui.data.ScreenshotRule
+import ru.iteco.fmhandroid.ui.data.TestData
+import ru.iteco.fmhandroid.ui.pages.AuthPage
+import ru.iteco.fmhandroid.ui.pages.MainPage
 
 @RunWith(AndroidJUnit4::class)
 @Epic("UI-тестирование приложения «Мобильный хоспис»")
@@ -30,26 +24,17 @@ class AuthTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(AppActivity::class.java)
 
-
     @get:Rule
     val screenshotRule = ScreenshotRule()
 
     private val authPage = AuthPage()
-
+    private val mainPage = MainPage()
 
     @Before
     fun prepareAuthScreen() {
-        Waiters.waitForDisplayedView(
-            anyOf(withId(R.id.enter_button), withId(R.id.main_menu_image_button)),
-            20000
-        )
-
-        try {
-            onView(withId(R.id.authorization_image_button)).perform(click())
-            onView(withText("Log out")).perform(click())
-        } catch (e: Exception) {
-        }
-
+        activityRule.scenario.recreate()
+        mainPage.waitForAnyStartScreen()
+        mainPage.logoutIfLoggedIn()
         authPage.waitForAuthScreen()
     }
 
@@ -67,7 +52,7 @@ class AuthTest {
     @Description("Проверяет, что при вводе корректных логина и пароля выполняется вход и открывается главный экран приложения")
     fun loginWithValidCredentialsShouldSucceed() {
         authPage.login(TestData.VALID_LOGIN, TestData.VALID_PASSWORD)
-        Waiters.waitForDisplayedView(withId(R.id.main_menu_image_button), 20000)
+        mainPage.waitForMainScreen()
     }
 
     @Test
@@ -76,6 +61,17 @@ class AuthTest {
     @Description("Проверяет, что при вводе неверного пароля вход не выполняется и пользователь остаётся на экране авторизации")
     fun loginWithInvalidPasswordShouldFail() {
         authPage.login(TestData.VALID_LOGIN, TestData.INVALID_PASSWORD)
+        authPage.checkStillOnAuthScreen()
+    }
+
+    @Test
+    @Story("Вход в приложение")
+    @DisplayName("Отказ во входе при пустых полях")
+    @Description("Проверяет, что при пустых полях логина и пароля вход не выполняется")
+    fun loginWithEmptyFieldsShouldFail() {
+        authPage.enterLogin("")
+        authPage.enterPassword("")
+        authPage.clickSignInButton()
         authPage.checkAuthScreenIsDisplayed()
     }
 }

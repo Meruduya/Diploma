@@ -2,6 +2,7 @@ package ru.iteco.fmhandroid.ui.pages
 
 import android.view.View
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -33,7 +34,7 @@ class AuthPage {
 
     fun waitForAuthScreen(): AuthPage {
         Allure.step("Дождаться загрузки экрана авторизации") {
-            Waiters.waitForView(signInButton)
+            Waiters.waitForDisplayedView(signInButton, 20000)
         }
         return this
     }
@@ -73,5 +74,31 @@ class AuthPage {
             clickSignInButton()
         }
         return this
+    }
+
+    fun loginIfNeeded(login: String, password: String): AuthPage {
+        Allure.step("Выполнить вход, если открыт экран авторизации") {
+            if (isOnAuthScreen()) {
+                login(login, password)
+            }
+        }
+        return this
+    }
+
+    fun checkStillOnAuthScreen(timeoutMillis: Long = 7000): AuthPage {
+        Allure.step("Убедиться, что вход не выполнен и экран авторизации остался открытым") {
+            val endTime = System.currentTimeMillis() + timeoutMillis
+            while (System.currentTimeMillis() < endTime) {
+                onView(signInButton).check(matches(isDisplayed()))
+            }
+        }
+        return this
+    }
+
+    private fun isOnAuthScreen(): Boolean = try {
+        onView(allOf(signInButton, isDisplayed())).check(matches(isDisplayed()))
+        true
+    } catch (e: NoMatchingViewException) {
+        false
     }
 }

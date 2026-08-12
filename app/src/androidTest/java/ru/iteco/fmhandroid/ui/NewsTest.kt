@@ -1,6 +1,5 @@
 package ru.iteco.fmhandroid.ui
 
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.qameta.allure.kotlin.Description
@@ -8,18 +7,16 @@ import io.qameta.allure.kotlin.Epic
 import io.qameta.allure.kotlin.Feature
 import io.qameta.allure.kotlin.Story
 import io.qameta.allure.kotlin.junit4.DisplayName
-import org.hamcrest.Matchers.anyOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import ru.iteco.fmhandroid.R
+import ru.iteco.fmhandroid.ui.data.ScreenshotRule
 import ru.iteco.fmhandroid.ui.data.TestData
-import ru.iteco.fmhandroid.ui.data.Waiters
 import ru.iteco.fmhandroid.ui.pages.AuthPage
+import ru.iteco.fmhandroid.ui.pages.ControlPanelPage
 import ru.iteco.fmhandroid.ui.pages.MainPage
 import ru.iteco.fmhandroid.ui.pages.NewsPage
-import ru.iteco.fmhandroid.ui.data.ScreenshotRule
 
 @RunWith(AndroidJUnit4::class)
 @Epic("UI-тестирование приложения «Мобильный хоспис»")
@@ -35,20 +32,13 @@ class NewsTest {
     private val authPage = AuthPage()
     private val mainPage = MainPage()
     private val newsPage = NewsPage()
+    private val controlPanelPage = ControlPanelPage()
 
     @Before
-    fun loginIfNeeded() {
-        Waiters.waitForDisplayedView(
-            anyOf(withId(R.id.enter_button), withId(R.id.main_menu_image_button)),
-            20000
-        )
-
-        try {
-            authPage.checkAuthScreenIsDisplayed()
-            authPage.login(TestData.VALID_LOGIN, TestData.VALID_PASSWORD)
-        } catch (e: Exception) {
-        }
-
+    fun prepareMainScreen() {
+        activityRule.scenario.recreate()
+        mainPage.waitForAnyStartScreen()
+        authPage.loginIfNeeded(TestData.VALID_LOGIN, TestData.VALID_PASSWORD)
         mainPage.waitForMainScreen()
     }
 
@@ -73,9 +63,9 @@ class NewsTest {
 
     @Test
     @Story("Сортировка новостей")
-    @DisplayName("Кнопка сортировки изменяет порядок новостей")
-    @Description("Проверяет, что нажатие кнопки сортировки не нарушает отображение списка новостей")
-    fun sortButtonShouldChangeNewsOrder() {
+    @DisplayName("Список новостей сохраняет работоспособность после сортировки")
+    @Description("Проверяет, что после нажатия кнопки сортировки список новостей остаётся доступным и отображается корректно")
+    fun sortButtonShouldKeepNewsListDisplayed() {
         mainPage.openAllNews()
         newsPage.waitForNewsList()
         newsPage.clickSortButton()
@@ -90,6 +80,7 @@ class NewsTest {
         mainPage.openAllNews()
         newsPage.waitForNewsList()
         newsPage.openControlPanel()
-        newsPage.checkNewsListIsDisplayed()
+        controlPanelPage.waitForControlPanel()
+        controlPanelPage.checkControlPanelIsDisplayed()
     }
 }
